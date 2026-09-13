@@ -18,6 +18,7 @@ FND.store = (function () {
   };
 
   let data = { jobs: [], expenses: [], clients: [], services: null, meta: {} };
+  let lastError = '';
   let listeners = [];
 
   /* ---------- tiny helpers ---------- */
@@ -39,9 +40,19 @@ FND.store = (function () {
      POST uses text/plain on purpose: it keeps the browser from
      sending a CORS preflight, which Apps Script cannot answer. */
   async function call(action, payload) {
-    const url = FND.config.apiUrl;
+    /* iOS caches the redirect Apps Script sends back, and the address it
+       redirects to carries a one-time token. Once cached, every later call
+       goes to a dead address. A changing parameter keeps the cache from
+       ever matching. Apps Script ignores parameters it does not know. */
+    const base = FND.config.apiUrl;
+    const url = base + (base.indexOf('?') > -1 ? '&' : '?') + 'cb=' + Date.now() + Math.random().toString(36).slice(2, 6);
     const body = JSON.stringify({ action, token: getToken(), payload: payload || {} });
-    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body });
+    const res = await fetch(url, {
+      method: 'POST',
+      cache: 'no-store',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body
+    });
     if (!res.ok) throw new Error('Server returned ' + res.status);
     const out = await res.json();
     if (!out.ok) throw new Error(out.error || 'Request failed');
@@ -103,6 +114,7 @@ FND.store = (function () {
     if (cached) { data = cached; emit(); }
 
     try {
+      lastError = '';
       const fresh = await call('bootstrap');
       data = Object.assign({ jobs:[], expenses:[], clients:[], services:null }, fresh, { meta:{ mode:'live', fetchedAt:Date.now() } });
       ls.set(K.cache, data);
@@ -110,8 +122,9 @@ FND.store = (function () {
       await flush();
       return { mode:'live' };
     } catch (e) {
+      lastError = (e.name ? e.name + ': ' : '') + e.message;
       emit();
-      return { mode: cached ? 'cached' : 'offline', error: e.message };
+      return { mode: cached ? 'cached' : 'offline', error: lastError };
     }
   }
 
@@ -213,6 +226,7 @@ FND.store = (function () {
     get services() { return data.services || FND.config.services; },
     get mode()     { return data.meta.mode || 'demo'; },
     isLive, getToken, setToken,
+    get lastError() { return lastError; },
     load, onChange, flush, outbox,
     addJob, completeJob, updateJob, deleteJob,
     addExpense, deleteExpense,

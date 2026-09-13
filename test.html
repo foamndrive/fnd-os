@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FND connection test</title>
+<style>
+  body{font-family:system-ui,-apple-system,sans-serif;background:#212529;color:#E7ECEF;
+       margin:0;padding:22px 16px 60px;line-height:1.5;font-size:15px}
+  .wrap{max-width:640px;margin:0 auto}
+  h1{font-size:20px;margin:0 0 6px}
+  p.sub{color:#98a2ab;font-size:13.5px;margin:0 0 20px}
+  label{display:block;font-size:12px;color:#98a2ab;font-weight:600;margin:14px 0 6px}
+  input{width:100%;background:#2a2f35;border:1px solid #3a4148;color:#E7ECEF;border-radius:10px;
+        padding:12px;font-size:15px;box-sizing:border-box}
+  button{width:100%;margin-top:16px;background:#FF89A9;border:0;color:#212529;font-weight:700;
+         font-size:15px;padding:14px;border-radius:10px;cursor:pointer}
+  pre{background:#1b1f23;border:1px solid #3a4148;border-radius:10px;padding:14px;margin-top:18px;
+      white-space:pre-wrap;word-break:break-all;font-size:12.5px;color:#A2D2FF;min-height:60px}
+  .ok{color:#A2D2FF}.bad{color:#FF89A9}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Connection test</h1>
+  <p class="sub">This does not save anything. It runs the same three calls the app makes and prints exactly what comes back, including the error the app normally hides.</p>
+
+  <label>Sheet link, ending in /exec</label>
+  <input id="url" placeholder="https://script.google.com/macros/s/.../exec" autocapitalize="off" autocorrect="off" spellcheck="false">
+
+  <label>Access key</label>
+  <input id="key" placeholder="paste the key" autocapitalize="off" autocorrect="off" spellcheck="false">
+
+  <button id="run">Run the test</button>
+  <pre id="out">Waiting.</pre>
+</div>
+
+<script>
+const out = document.getElementById('out');
+function say(line, cls){
+  out.innerHTML += '\n' + (cls ? '<span class="'+cls+'">'+line+'</span>' : line);
+}
+
+document.getElementById('run').onclick = async () => {
+  const url = document.getElementById('url').value.trim();
+  const key = document.getElementById('key').value.trim();
+  out.textContent = 'Running.';
+
+  say('Browser: ' + navigator.userAgent.slice(0, 90));
+  say('URL length: ' + url.length + ', ends with: "' + url.slice(-6) + '"');
+  say('Key length: ' + key.length + ', first 4: "' + key.slice(0, 4) + '"');
+  if (/\s/.test(url)) say('WARNING: the URL contains a space', 'bad');
+  if (/\s/.test(key)) say('WARNING: the key contains a space', 'bad');
+  if (!url.endsWith('/exec')) say('WARNING: the URL does not end in /exec', 'bad');
+
+  /* TEST 1: can this device reach the address at all */
+  say('\n--- TEST 1: plain GET ---');
+  try {
+    const r = await fetch(url, { method: 'GET' });
+    const t = await r.text();
+    say('Status ' + r.status + '. Reply: ' + t.slice(0, 120), 'ok');
+  } catch (e) {
+    say('FAILED: ' + e.name + ': ' + e.message, 'bad');
+  }
+
+  /* TEST 2: the exact call the app makes */
+  say('\n--- TEST 2: POST ping, what the app does ---');
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'ping', token: key, payload: {} })
+    });
+    const t = await r.text();
+    say('Status ' + r.status + '. Reply: ' + t.slice(0, 200), 'ok');
+  } catch (e) {
+    say('FAILED: ' + e.name + ': ' + e.message, 'bad');
+  }
+
+  /* TEST 3: the fix. POST with cache busting */
+  say('\n--- TEST 3: POST with cache busting, the fix ---');
+  const busted = url + (url.indexOf('?') > -1 ? '&' : '?') + 'cb=' + Date.now();
+  try {
+    const r = await fetch(busted, {
+      method: 'POST',
+      cache: 'no-store',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'ping', token: key, payload: {} })
+    });
+    const t = await r.text();
+    say('Status ' + r.status + '. Reply: ' + t.slice(0, 200), 'ok');
+  } catch (e) {
+    say('FAILED: ' + e.name + ': ' + e.message, 'bad');
+  }
+
+  /* TEST 4: run it a second time, to prove it keeps working */
+  say('\n--- TEST 4: same again, does it survive a repeat ---');
+  try {
+    const r = await fetch(url + (url.indexOf('?') > -1 ? '&' : '?') + 'cb=' + (Date.now() + 1), {
+      method: 'POST',
+      cache: 'no-store',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'ping', token: key, payload: {} })
+    });
+    const t = await r.text();
+    say('Status ' + r.status + '. Reply: ' + t.slice(0, 200), 'ok');
+  } catch (e) {
+    say('FAILED: ' + e.name + ': ' + e.message, 'bad');
+  }
+
+  say('\nDone. Screenshot this whole page.');
+};
+</script>
+</body>
+</html>

@@ -73,6 +73,11 @@ footer{margin-top:32px;display:flex;justify-content:space-between;gap:14px;flex-
   <div id="phases"></div>
 
   <div class="note">
+    <b>Changing the backend later? Redeploy, or nothing happens.</b>
+    Editing Code.gs and saving is not enough. The address keeps serving the old version until you press Deploy, then Manage deployments, then the pencil icon, then set Version to New version and press Deploy. Same address, new code. This trips everyone once.
+  </div>
+
+  <div class="note">
     <b>The access key is the lock on your books.</b>
     It goes in the app on each device you use, and nowhere else. Not in a file you upload, not in a screenshot, not in a message. If it ever leaks, run <code>makeAccessKey()</code> again and re-enter the new one on your devices.
   </div>
@@ -107,23 +112,34 @@ const DATA = [
   },
   {
     title:'Make the key and publish the backend',
-    why:'This is what the app talks to, and what stops anyone else talking to it.',
+    why:'You are in the Apps Script editor from the last section. Everything here happens on that one page.',
     items:[
-      {h:'Run makeAccessKey once', d:'Then open View, Execution log. Copy the long key it printed and keep it somewhere safe for the next few minutes.'},
-      {h:'Deploy, New deployment, Web app', d:'Execute as: Me. Who has access: Anyone. Anyone is required for your phone to reach it; the key is what actually protects it.'},
-      {h:'Copy the web app URL', d:'It ends in /exec. This is your sheet link.'},
-      {h:'Run installBackup once', d:'Sets up the nightly copy into a Drive folder called FND Backups, keeping the last 30 days.'}
+      {h:'Find the toolbar above the code', d:'Across the top of the code area there is a row: a disk icon (Save), a triangle (Run), a bug (Debug), and a dropdown listing function names. That dropdown is how you choose which piece of the code to run.'},
+      {h:'Choose makeAccessKey in the dropdown and press Run', d:'makeAccessKey is a piece of code inside the Code.gs you pasted. You are not finding it anywhere else, it came with the file. Running it invents a long random password and stores it inside your script.'},
+      {h:'Read the key out of the panel at the bottom', d:'A panel called Execution log opens under the code. It prints ACCESS KEY followed by a long string of letters and numbers. Select that string and copy it.'},
+      {h:'Put the key somewhere safe for now', d:'A note on your phone is fine for the next twenty minutes. Not a group chat, not a screenshot you post.'},
+      {h:'Press the blue Deploy button, top right', d:'Choose New deployment from the menu that drops down.'},
+      {h:'Pick the deployment type', d:'A window opens. Click the gear icon next to Select type, then choose Web app. If you skip this you get the wrong kind of deployment and nothing works.'},
+      {h:'Fill the three fields', d:'Description: anything, for example v1. Execute as: Me. Who has access: Anyone. Anyone sounds wrong but it only means the address exists on the internet; the key you just made is the actual lock.'},
+      {h:'Press Deploy and approve the permissions', d:'Google will ask permission to run as you. You may see a screen saying Google has not verified this app. That is because it is yours and unpublished. Click Advanced, then Go to FND OS (unsafe). It is your own code.'},
+      {h:'Copy the Web app URL', d:'The window now shows a long address ending in /exec. Copy the whole thing. This is your sheet link. Keep it next to the key.'},
+      {h:'Choose installBackup in the dropdown and press Run', d:'Sets up the nightly copy into a Drive folder called FND Backups, keeping the last 30 days. One run, then it looks after itself.'},
+      {h:'Check nothing is red', d:'Open Executions in the left sidebar. Three runs should show as Completed: setupSheet, makeAccessKey, installBackup. Anything marked Failed, send me the message.'}
     ]
   },
   {
     title:'Put the app online',
-    why:'So the same app opens on your laptop, phone and iPad without installing anything.',
+    why:'The app files have to sit at a web address so your phone, laptop and iPad can all open the same thing. GitHub does this free. You are using it as a hosting company, nothing more.',
     items:[
-      {h:'Create a free GitHub account', d:'Use an email you will keep. This is only a host; nothing sensitive goes here.'},
-      {h:'Create a repository called fnd-os', d:'On the free plan, GitHub Pages needs the repository to be public. That is fine, because the app files contain no key and no data.'},
-      {h:'Upload all the app files, keeping the folders', d:'index.html, manifest.json, the two icon files, the css folder and the js folder. Leave apiUrl empty in config.js so the URL is not published.'},
-      {h:'Turn on Pages', d:'Repository Settings, Pages, Source: deploy from branch, Branch: main, folder: / (root). Save. Give it two minutes and it prints your address.'},
-      {h:'Open the address in a browser', d:'You should see the app in demo mode with sample jobs.'}
+      {h:'Unzip the app folder on your laptop', d:'You get a folder called fnd containing index.html, manifest.json, two icon files, and folders named css, js and apps-script.'},
+      {h:'Create a free GitHub account', d:'github.com, Sign up. Use an email you will keep. Verify the email before continuing or the next step will not appear.'},
+      {h:'Create a new repository', d:'Top right, the plus icon, New repository. Repository name: fnd-os. Leave it set to Public. Do not tick Add a README. Press Create repository.'},
+      {h:'Understand why Public is fine', d:'The app files contain no key, no bank details and no customer data. Your key gets typed into the app on each device instead. On the free plan, hosting only works with a public repository.'},
+      {h:'Upload the files', d:'On the empty repository page click uploading an existing file. Open the fnd folder, select everything inside it, and drag it into the browser window. Drag the contents, not the fnd folder itself, or your address ends up one level too deep.'},
+      {h:'Check the list before committing', d:'You should see index.html, manifest.json, the two icons, and the css and js folders. Scroll down and press Commit changes.'},
+      {h:'Turn on hosting', d:'Click Settings at the top of the repository, then Pages in the left sidebar. Under Source choose Deploy from a branch. Under Branch choose main, and leave the folder as / (root). Press Save.'},
+      {h:'Wait two minutes and copy your address', d:'Refresh the Pages screen. It prints your site is live at, followed by an address like yourname.github.io/fnd-os/. That address is your app, forever.'},
+      {h:'Open the address in a browser', d:'You should see the app with sample jobs and a pink DEMO badge. If you get a 404, wait another two minutes and refresh; first publish is slow.'}
     ]
   },
   {

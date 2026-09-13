@@ -17,10 +17,13 @@ FND.config = {
   },
 
   /* --- backend ------------------------------------------
-     Leave apiUrl empty to run in DEMO mode (fake data, nothing
-     saved anywhere real). Paste your Apps Script web app URL
-     here after SETUP step 6 to go live.                      */
-  apiUrl: '',
+     '/api' is the relay that sits at the same address as this
+     app. It passes your requests to Apps Script. Your real
+     Apps Script URL is not written anywhere in these files; it
+     is stored in Cloudflare as SCRIPT_URL.
+
+     Leave this as '/api'. Set it to '' to force DEMO mode.   */
+  apiUrl: '/api',
 
   /* --- device lock ---------------------------------------
      pinLength: how many digits. lockAfterMinutes: idle time

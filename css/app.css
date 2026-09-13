@@ -188,6 +188,11 @@ select.ctl{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xm
   border-radius:50%;font-size:13px;line-height:1;cursor:pointer}
 .tag button:hover{background:var(--pink);color:var(--char)}
 
+details.adv{margin:6px 0 14px}
+details.adv summary{font-size:12px;color:var(--mute);font-weight:600;cursor:pointer;padding:6px 0}
+details.adv summary:hover{color:var(--ink)}
+details.adv[open] summary{margin-bottom:8px}
+
 /* ---------- sheet ---------- */
 .scrim{position:fixed;inset:0;background:rgba(15,17,19,.66);display:none;z-index:60;align-items:center;justify-content:center;padding:24px}
 .scrim.open{display:flex}

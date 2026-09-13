@@ -24,10 +24,13 @@ FND.screens.settings = (function () {
 
       ${u.panel('Connection', mode, `
         <p class="sub">${u.esc(modeText)}</p>
-        ${u.field('Sheet link (Apps Script web app URL)', u.input('set_api', { value: FND.config.apiUrl || '', placeholder:'https://script.google.com/macros/s/.../exec' }),
-          'Set once during setup. Editing this here only changes it on this device; the permanent copy lives in config.js.')}
-        ${u.field('Access key', u.input('set_token', { value: s.getToken() ? '••••••••••••' : '', placeholder:'Paste the key from setup step 6' }),
-          'Treat this like a password. It is what stops a stranger writing to your books.')}
+        ${s.lastError ? `<p class="sub" style="color:var(--pink);margin-top:6px">Last error: ${u.esc(s.lastError)}</p>` : ''}
+        ${u.field('Access key', u.input('set_token', { value: s.getToken() ? '••••••••••••' : '', placeholder:'Paste your access key' }),
+          'The only thing you need to paste. Treat it like a password: it is what stops a stranger writing to your books. Clear the box before pasting a new one.')}
+        <details class="adv"><summary>Advanced: backend address</summary>
+          ${u.field('Currently', u.input('set_api', { value: FND.config.apiUrl || '', placeholder:'/api' }),
+            'Leave this as /api. It points at the relay that sits at the same address as this app.')}
+        </details>
         <div class="btns">
           <button class="btn blue" id="saveConn">Save connection</button>
           <button class="btn" id="syncNow">Sync now</button>
