@@ -77,11 +77,29 @@ document.getElementById('run').onclick = async () => {
     say('FAILED: ' + e.name + ': ' + e.message, 'bad');
   }
 
-  /* TEST 3: POST with no headers set at all */
-  say('\n--- TEST 3: POST, no header ---');
+  /* TEST 3: the fix. POST with cache busting */
+  say('\n--- TEST 3: POST with cache busting, the fix ---');
+  const busted = url + (url.indexOf('?') > -1 ? '&' : '?') + 'cb=' + Date.now();
   try {
-    const r = await fetch(url, {
+    const r = await fetch(busted, {
       method: 'POST',
+      cache: 'no-store',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'ping', token: key, payload: {} })
+    });
+    const t = await r.text();
+    say('Status ' + r.status + '. Reply: ' + t.slice(0, 200), 'ok');
+  } catch (e) {
+    say('FAILED: ' + e.name + ': ' + e.message, 'bad');
+  }
+
+  /* TEST 4: run it a second time, to prove it keeps working */
+  say('\n--- TEST 4: same again, does it survive a repeat ---');
+  try {
+    const r = await fetch(url + (url.indexOf('?') > -1 ? '&' : '?') + 'cb=' + (Date.now() + 1), {
+      method: 'POST',
+      cache: 'no-store',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ action: 'ping', token: key, payload: {} })
     });
     const t = await r.text();
