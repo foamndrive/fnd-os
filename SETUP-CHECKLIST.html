@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FND OS: setup checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,800&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+:root{--char:#212529;--char2:#2a2f35;--char3:#343a41;--line:#3a4148;--ink:#E7ECEF;
+  --mute:#98a2ab;--faint:#6b747c;--pink:#FF89A9;--blue:#A2D2FF}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--char);color:var(--ink);font-family:'Montserrat',system-ui,sans-serif;
+  line-height:1.55;padding:34px 18px 90px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto}
+.mark{font-family:'Permanent Marker',cursive;font-size:30px;letter-spacing:1px}
+.mark .n{color:var(--pink);font-size:.62em;vertical-align:.18em;margin:0 1px}
+h1{font-weight:800;font-style:italic;font-size:clamp(26px,5vw,38px);line-height:1.08;margin:14px 0 10px}
+.lead{color:var(--mute);font-size:14.5px;max-width:62ch}
+.barwrap{margin:24px 0 6px;background:var(--char2);border:1px solid var(--line);border-radius:20px;height:10px;overflow:hidden}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--blue));transition:width .35s ease}
+.barlabel{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mute);
+  letter-spacing:.06em;margin-bottom:28px}
+.barlabel b{color:var(--pink)}
+.phase{margin-bottom:14px;background:var(--char2);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.phead{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;user-select:none}
+.phead:hover{background:var(--char3)}
+.pnum{font-family:'Permanent Marker',cursive;font-size:24px;color:var(--pink);min-width:30px;text-align:center;line-height:1}
+.ptitle{flex:1}
+.ptitle .t{font-weight:700;font-size:16.5px}
+.ptitle .why{font-size:12px;color:var(--mute);margin-top:2px}
+.pcount{font-size:11.5px;color:var(--mute);white-space:nowrap}
+.pcount.complete{color:var(--blue)}
+.chev{color:var(--mute);font-size:12px;transition:transform .2s}
+.phase.open .chev{transform:rotate(90deg)}
+.items{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.phase.open .items{max-height:3000px}
+.item{display:flex;gap:13px;padding:13px 20px 13px 22px;border-top:1px solid var(--line);align-items:flex-start;cursor:pointer}
+.item:hover{background:var(--char3)}
+.box{min-width:19px;height:19px;border:1.5px solid var(--pink);border-radius:5px;margin-top:3px;
+  display:flex;align-items:center;justify-content:center;transition:all .15s}
+.box svg{width:12px;height:12px;opacity:0;transition:opacity .15s}
+.item.done .box{background:var(--pink);border-color:var(--pink)}
+.item.done .box svg{opacity:1}
+.itext{flex:1;min-width:0}
+.itext .h{font-size:14px;font-weight:600}
+.itext .d{font-size:12.5px;color:var(--mute);margin-top:3px}
+.item.done .itext .h{color:var(--mute);text-decoration:line-through;text-decoration-color:var(--faint)}
+.item.done .itext .d{opacity:.55}
+code{background:var(--char);border:1px solid var(--line);border-radius:5px;padding:1px 6px;
+  font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--blue);word-break:break-word}
+.note{background:rgba(255,137,169,.1);border-left:2px solid var(--pink);border-radius:0 10px 10px 0;
+  padding:14px 16px;margin:26px 0;font-size:13px;color:var(--ink)}
+.note b{display:block;margin-bottom:3px}
+footer{margin-top:32px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  border-top:1px solid var(--line);padding-top:18px;align-items:center}
+.foot{font-size:12px;color:var(--mute);max-width:56ch}
+.reset{background:none;border:1px solid var(--line);color:var(--mute);font-family:inherit;font-size:11.5px;
+  letter-spacing:.06em;text-transform:uppercase;padding:9px 16px;border-radius:8px;cursor:pointer}
+.reset:hover{border-color:var(--pink);color:var(--pink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="mark">F<span class="n">N</span>D</div>
+  <h1>Setup checklist</h1>
+  <p class="lead">Do these in order. Nothing later works without the step before it. Total time is about an hour, and you only ever do it once. Tap an item to check it off; progress saves in this browser.</p>
+
+  <div class="barwrap"><div class="bar" id="bar"></div></div>
+  <div class="barlabel"><span>Progress</span><span><b id="pct">0%</b> &nbsp;·&nbsp; <span id="frac">0 / 0</span></span></div>
+
+  <div id="phases"></div>
+
+  <div class="note">
+    <b>The access key is the lock on your books.</b>
+    It goes in the app on each device you use, and nowhere else. Not in a file you upload, not in a screenshot, not in a message. If it ever leaks, run <code>makeAccessKey()</code> again and re-enter the new one on your devices.
+  </div>
+
+  <footer>
+    <p class="foot">Once every box is ticked, the app on your phone writes straight into your sheet, and your sheet backs itself up every night.</p>
+    <button class="reset" id="reset">Reset checklist</button>
+  </footer>
+</div>
+
+<script>
+const DATA = [
+  {
+    title:'Lock the account down',
+    why:'Everything hangs off this one Google account. Secure it before you connect anything to it.',
+    items:[
+      {h:'Turn on 2-step verification for foamndrive@gmail.com', d:'Google Account, Security, 2-Step Verification. Use an authenticator app, not text messages. This is the single most important step on the page.'},
+      {h:'Sign out of the other Google accounts in your main browser', d:'Or put foamndrive as the default profile. Half the tab chaos you described is Google guessing the wrong account.'},
+      {h:'Save recovery codes somewhere offline', d:'If you lose the phone with the authenticator on it, these get you back in.'}
+    ]
+  },
+  {
+    title:'Build the database',
+    why:'A Google Sheet is where your jobs and expenses will actually live.',
+    items:[
+      {h:'Create a new Google Sheet called FND-DATA', d:'Signed in as foamndrive. Do not rename the tabs afterwards; the code looks for them by name.'},
+      {h:'Open Extensions, then Apps Script', d:'This opens the code editor attached to that sheet.'},
+      {h:'Delete the sample code and paste in Code.gs', d:'The whole file. Then save with the disk icon, and name the project FND OS.'},
+      {h:'Run setupSheet once', d:'Pick setupSheet from the function dropdown and press Run. Google will ask for permission; approve it. This builds the Jobs, Expenses, Clients, Prices, Settings and Log tabs.'},
+      {h:'Check the tabs appeared in your sheet', d:'Six tabs with bold dark headers. If not, re-read the error in the execution log.'}
+    ]
+  },
+  {
+    title:'Make the key and publish the backend',
+    why:'This is what the app talks to, and what stops anyone else talking to it.',
+    items:[
+      {h:'Run makeAccessKey once', d:'Then open View, Execution log. Copy the long key it printed and keep it somewhere safe for the next few minutes.'},
+      {h:'Deploy, New deployment, Web app', d:'Execute as: Me. Who has access: Anyone. Anyone is required for your phone to reach it; the key is what actually protects it.'},
+      {h:'Copy the web app URL', d:'It ends in /exec. This is your sheet link.'},
+      {h:'Run installBackup once', d:'Sets up the nightly copy into a Drive folder called FND Backups, keeping the last 30 days.'}
+    ]
+  },
+  {
+    title:'Put the app online',
+    why:'So the same app opens on your laptop, phone and iPad without installing anything.',
+    items:[
+      {h:'Create a free GitHub account', d:'Use an email you will keep. This is only a host; nothing sensitive goes here.'},
+      {h:'Create a repository called fnd-os', d:'On the free plan, GitHub Pages needs the repository to be public. That is fine, because the app files contain no key and no data.'},
+      {h:'Upload all the app files, keeping the folders', d:'index.html, manifest.json, the two icon files, the css folder and the js folder. Leave apiUrl empty in config.js so the URL is not published.'},
+      {h:'Turn on Pages', d:'Repository Settings, Pages, Source: deploy from branch, Branch: main, folder: / (root). Save. Give it two minutes and it prints your address.'},
+      {h:'Open the address in a browser', d:'You should see the app in demo mode with sample jobs.'}
+    ]
+  },
+  {
+    title:'Connect and lock the app',
+    why:'Two pastes and a PIN, on each device you use.',
+    items:[
+      {h:'In the app, open Settings', d:'Paste the /exec URL into Sheet link and the key into Access key, then Save connection.'},
+      {h:'Confirm the badge says Live', d:'Bottom left on a laptop. If it says offline, the URL or the key is wrong.'},
+      {h:'Set a PIN', d:'Settings, Lock. Four digits. It gets asked again after ten minutes idle.'},
+      {h:'Add to Home Screen on your phone', d:'Safari or Chrome, Share, Add to Home Screen. The FND icon opens it full screen with no browser bars. Repeat on the iPad.'},
+      {h:'Repeat the connection step on each device', d:'The key is stored per device on purpose. Losing one phone does not hand over the other.'}
+    ]
+  },
+  {
+    title:'Test it before you trust it',
+    why:'Ten minutes now saves a month of doubting your own numbers.',
+    items:[
+      {h:'Book a test job in the app', d:'Then open the Jobs tab of your sheet. A row should be sitting there within seconds.'},
+      {h:'Complete that job and check the row updated', d:'Price, payment method, hours and kilometres all filled in.'},
+      {h:'Add a test expense', d:'Type a vendor you actually use, like Carzilla, and watch the category guess itself.'},
+      {h:'Turn on airplane mode and log another job', d:'It should save instantly and show as waiting to sync. Turn signal back on and watch it send. This is the garage and marina test.'},
+      {h:'Delete the test rows from the sheet', d:'Straight from the sheet is fine. Then reopen the app and pull a fresh sync.'},
+      {h:'Tell me what felt wrong', d:'Wording, layout, missing fields, anything slower than it should be. That is the tweak list before we load your real data.'}
+    ]
+  },
+  {
+    title:'Load your real history',
+    why:'Only after you have approved how the app feels. This is the last step, not the first.',
+    items:[
+      {h:'Send me the current workbook', d:'All 182 jobs and 192 expenses get mapped into the new tabs in one pass, with the payment method spellings cleaned up.'},
+      {h:'Backfill August and September', d:'Anything you remember from the gap. Rough is better than missing.'},
+      {h:'Fill the Prices tab from your real price list', d:'Once it is filled, the app stops using the fallback list in config.js and reads yours.'},
+      {h:'Stop opening the old Excel file', d:'Keep it as an archive. Running two systems for a month is how both end up wrong.'}
+    ]
+  }
+];
+
+const KEY='fnd-setup-v1';
+let state={};
+try{ state=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ state={}; }
+const save=()=>{ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} };
+const idOf=(p,i)=>'p'+p+'i'+i;
+
+function render(){
+  const host=document.getElementById('phases');
+  host.innerHTML='';
+  let total=0, done=0;
+  DATA.forEach((ph,pi)=>{
+    let pdone=0;
+    const phase=document.createElement('div');
+    phase.className='phase'+(state['_open'+pi]!==false?' open':'');
+    const head=document.createElement('div'); head.className='phead';
+    const items=document.createElement('div'); items.className='items';
+    ph.items.forEach((it,ii)=>{
+      total++; const id=idOf(pi,ii); const isDone=!!state[id];
+      if(isDone){ done++; pdone++; }
+      const row=document.createElement('div');
+      row.className='item'+(isDone?' done':'');
+      row.innerHTML='<div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#212529" stroke-width="3.5" stroke-linecap="round"><path d="M4 12l5 5L20 6"/></svg></div>'
+        +'<div class="itext"><div class="h">'+it.h+'</div><div class="d">'+it.d+'</div></div>';
+      row.onclick=()=>{ state[id]=!state[id]; save(); render(); };
+      items.appendChild(row);
+    });
+    const all=pdone===ph.items.length;
+    head.innerHTML='<div class="pnum">'+(pi+1)+'</div>'
+      +'<div class="ptitle"><div class="t">'+ph.title+'</div><div class="why">'+ph.why+'</div></div>'
+      +'<div class="pcount'+(all?' complete':'')+'">'+pdone+'/'+ph.items.length+'</div><div class="chev">&#9654;</div>';
+    head.onclick=()=>{ state['_open'+pi]=!(state['_open'+pi]!==false); save(); render(); };
+    phase.appendChild(head); phase.appendChild(items); host.appendChild(phase);
+  });
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('bar').style.width=pct+'%';
+  document.getElementById('pct').textContent=pct+'%';
+  document.getElementById('frac').textContent=done+' / '+total;
+}
+document.getElementById('reset').onclick=()=>{
+  if(confirm('Clear every checkmark?')){ state={}; save(); render(); }
+};
+render();
+</script>
+</body>
+</html>

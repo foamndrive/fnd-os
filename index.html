@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
+<title>FND OS</title>
+
+<!-- Home screen install -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FND">
+<meta name="theme-color" content="#212529">
+<link rel="manifest" href="manifest.json">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,800&family=Permanent+Marker&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<!-- ---------- lock screen ---------- -->
+<div class="lock" id="lock">
+  <div class="lockbox">
+    <div class="mark">F<span class="n">N</span>D</div>
+    <p id="lockMsg">Enter your PIN</p>
+    <input id="pinInput" type="password" inputmode="numeric" autocomplete="off" aria-label="PIN">
+    <button class="btn pink wide" id="unlockBtn">Unlock</button>
+  </div>
+</div>
+
+<!-- ---------- app ---------- -->
+<div class="app">
+  <aside class="rail" id="rail"></aside>
+  <main class="main" id="main"></main>
+  <nav class="tabbar" id="tabbar"></nav>
+</div>
+
+<button class="fab" data-act="new" aria-label="New">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+
+<div class="scrim" id="scrim"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<!-- ---------- load order matters ----------
+     config  : your settings
+     store   : data in and out
+     ui      : formatting and shared pieces
+     screens : one file per screen
+     app     : boots everything
+     ------------------------------------------- -->
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/screen-home.js"></script>
+<script src="js/screen-jobs.js"></script>
+<script src="js/screen-money.js"></script>
+<script src="js/screen-settings.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
