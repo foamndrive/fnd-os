@@ -49,3 +49,4 @@ Safe to poke at.
 Calendar sync, website booking, Google Ads figures, receipt photos,
 automatic invoices and emails. Those are Phases 2 and 3, and they all hang
 off this foundation.
+
